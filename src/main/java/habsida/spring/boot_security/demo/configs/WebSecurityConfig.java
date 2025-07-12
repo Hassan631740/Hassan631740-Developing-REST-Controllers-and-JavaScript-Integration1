@@ -1,5 +1,6 @@
 package habsida.spring.boot_security.demo.configs;
 
+import model.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -9,17 +10,42 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import repository.UserRepository;
-import service.CustomUserDetailsService;
+import service.UserService;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-
     @Bean
-    public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService();
+    public UserService userDetailsService() {
+        return new UserService() {
+            @Override
+            public List<User> getAllUsers() {
+                return List.of();
+            }
+
+            @Override
+            public User getUserById(Long id) {
+                return null;
+            }
+
+            @Override
+            public void saveUser(User user) {
+
+            }
+
+            @Override
+            public void updateUser(User user) {
+
+            }
+
+            @Override
+            public org.springframework.security.core.userdetails.User deleteUser(Long id) {
+                return null;
+            }
+        };  // Assuming UserServiceImpl implements UserDetailsService
     }
 
     @Bean
@@ -30,14 +56,14 @@ public class WebSecurityConfig {
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setUserDetailsService((UserDetailsService) userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
 
     @Bean
     public AuthenticationSuccessHandler successUserHandler() {
-        return new SuccessUserHandler(); // Reuse existing handler
+        return new SuccessUserHandler();  // Ensure this class exists or implement custom handler
     }
 
     @Bean

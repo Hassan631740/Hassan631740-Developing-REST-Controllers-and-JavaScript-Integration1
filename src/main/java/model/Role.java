@@ -1,13 +1,11 @@
 package model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
+@Table(name = "roles")
 @Data
 public class Role implements GrantedAuthority {
     @Id
