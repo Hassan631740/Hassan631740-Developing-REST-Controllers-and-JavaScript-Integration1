@@ -1,6 +1,6 @@
-package repository;
+package habsida.spring.boot_security.demo.repository;
 
-import model.User;
+import habsida.spring.boot_security.demo.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

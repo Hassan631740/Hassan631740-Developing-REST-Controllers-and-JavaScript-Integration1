@@ -1,6 +1,7 @@
 package habsida.spring.boot_security.demo.configs;
 
-import model.User;
+import habsida.spring.boot_security.demo.model.User;
+import habsida.spring.boot_security.demo.service.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -10,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import service.UserService;
+import habsida.spring.boot_security.demo.service.UserService;
 
 import java.util.List;
 
@@ -18,48 +19,21 @@ import java.util.List;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    @Bean
-    public UserService userDetailsService() {
-        return new UserService() {
-            @Override
-            public List<User> getAllUsers() {
-                return List.of();
-            }
+    private final UserServiceImpl userDetailsService;
 
-            @Override
-            public User getUserById(Long id) {
-                return null;
-            }
-
-            @Override
-            public void saveUser(User user) {
-
-            }
-
-            @Override
-            public void updateUser(User user) {
-
-            }
-
-            @Override
-            public org.springframework.security.core.userdetails.User deleteUser(Long id) {
-                return null;
-            }
-        };  // Assuming UserServiceImpl implements UserDetailsService
+    public WebSecurityConfig(UserServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
+
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService((UserDetailsService) userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
+
+
+
 
     @Bean
     public AuthenticationSuccessHandler successUserHandler() {

@@ -1,4 +1,4 @@
-package model;
+package habsida.spring.boot_security.demo.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

@@ -1,7 +1,7 @@
-package service;
+package habsida.spring.boot_security.demo.service;
 
-import model.User;
-import repository.UserRepository;
+import habsida.spring.boot_security.demo.model.User;
+import habsida.spring.boot_security.demo.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

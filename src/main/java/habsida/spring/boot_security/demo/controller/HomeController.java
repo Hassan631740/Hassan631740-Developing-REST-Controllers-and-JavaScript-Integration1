@@ -1,4 +1,4 @@
-package controller;
+package habsida.spring.boot_security.demo.controller;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
