@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Admin Page</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{layout :: body}">
+    <div th:fragment="content">
+        <h2>Admin Dashboard</h2>
+        <a th:href="@{/admin/new}">Add New User</a>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.email}"></td>
+                <td>
+                    <a th:href="@{/admin/edit/{id}(id=${user.id})}">Edit</a>
+                    <a th:href="@{/admin/delete/{id}(id=${user.id})}">Delete</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(users)}">
+                <td colspan="4">No users found.</td>
+            </tr>  <!-- Optional: Show a message if empty -->
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
