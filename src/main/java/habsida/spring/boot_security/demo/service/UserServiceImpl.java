@@ -1,43 +1,26 @@
 package habsida.spring.boot_security.demo.service;
 
-import habsida.spring.boot_security.demo.model.User;
 import habsida.spring.boot_security.demo.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserDetailsService {
+
 
     private final UserRepository userRepository;
 
+
+    @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
     @Override
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    @Override
-    public User getUserById(Long id) {
-        return null;
-    }
-
-    @Override
-    public void saveUser(User user) {
-
-    }
-
-    @Override
-    public void updateUser(Long id, User user) {
-
-    }
-
-
-    @Override
-    public void deleteUser(Long id) {
-     userRepository.deleteById(id);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 }
