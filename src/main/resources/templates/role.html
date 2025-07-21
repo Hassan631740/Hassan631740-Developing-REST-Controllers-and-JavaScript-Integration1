@@ -1,10 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title th:if="${isUpdate}">Edit User</title>
+    <title th:unless="${isUpdate}">Add User</title>
 </head>
 <body>
-
+<h1 th:if="${isUpdate}">Edit User</h1>
+<h1 th:unless="${isUpdate}">Add New User</h1>
+<form th:action="@{/admin/users/save}" th:object="${user}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <label>Username: <input type="text" th:field="*{username}" /></label><br/>
+    <label>Password: <input type="password" th:field="*{password}" /></label><br/>
+    <label>Roles:</label><br/>
+    <div th:each="role : ${roles}">
+        <input type="checkbox" name="selectedRoles" th:value="${role.id}" th:checked="${user.roles.contains(role)}" />
+        <span th:text="${role.name}"></span><br/>
+    </div>
+    <button type="submit">Save</button>
+</form>
+<div sec:authorize="isAuthenticated()">
+    <a th:href="@{/logout}">Logout</a>
+</div>
 </body>
 </html>

@@ -1,6 +1,8 @@
 package habsida.spring.boot_security.demo.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -9,26 +11,50 @@ import java.util.*;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class User implements UserDetails {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name ="")
-    private String name;
-
     @Column(unique = true)
+    private String username;
+
+    @Column(name = "FRISTNAME")
+    private String firstName;
+
+    @Column(name = "LASTNAME")
+    private String lastName;
+
+    @Column(name = "AGE")
+    private int age;
+
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(name = "PASSWORD")
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles;
+
+    // Constructors
+    public User() {}
+
+    public User(String firstName, String lastName, int age, String email, String password, Set<Role> roles) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+    }
 
     // UserDetails methods
     @Override
@@ -43,18 +69,6 @@ public class User implements UserDetails {
     @Override public boolean isCredentialsNonExpired() { return true; }
     @Override public boolean isEnabled() { return true; }
 
-    // Getters and setters
-    public Long getId() { return id; }
 
-    public String getName() { return name; }
 
-    public void setName(String name) { this.name = name; }
-
-    public Set<Role> getRoles() { return roles; }
-
-    public void setRoles(Set<Role> roles) { this.roles = roles; }
-
-    public void setEmail(String email) { this.email = email; }
-
-    public void setPassword(String password) { this.password = password; }
 }

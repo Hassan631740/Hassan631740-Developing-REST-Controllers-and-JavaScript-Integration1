@@ -25,37 +25,25 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
-
-
-
     @Bean
     public AuthenticationSuccessHandler successUserHandler() {
         return new SuccessUserHandler();  // Ensure this class exists or implement custom handler
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/user").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/login", "/css/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .successHandler(successUserHandler())
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/admin", true)  // <- redirects here after login
                         .permitAll()
                 )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout")
-                        .permitAll()
-                )
-                .exceptionHandling(eh -> eh
-                        .accessDeniedPage("/403")
-                );
+                .logout(logout -> logout.permitAll());
 
         return http.build();
     }
