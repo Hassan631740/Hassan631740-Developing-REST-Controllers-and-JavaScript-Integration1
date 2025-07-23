@@ -17,11 +17,17 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, name = "NAME")
+    @Column(unique = true)
     private String name;
 
-    @Column(unique = true, name = "USERNAME")
-    private String username;
+    public String getName(){
+        return name;
+    }
+
+    // Optional: A cleaner method to just get the role keyword
+    public String getShortName() {
+        return name.replace("ROLE_", "");
+    }
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
@@ -35,7 +41,12 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return "ROLE_" + name;  // Spring Security expects "ROLE_" prefix
+        return "ROLE_" + name;
     }
 
+    // toString to help debugging
+    @Override
+    public String toString() {
+        return "[" + name + "]";
+    }
 }

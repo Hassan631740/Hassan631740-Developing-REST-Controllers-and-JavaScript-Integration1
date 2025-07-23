@@ -21,19 +21,15 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String username;
 
-    @Column(name = "FRISTNAME")
     private String firstName;
 
-    @Column(name = "LASTNAME")
     private String lastName;
 
-    @Column(name = "AGE")
     private int age;
 
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(name = "PASSWORD")
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -42,7 +38,8 @@ public class User implements UserDetails {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles;
+    private Set<Role> roles= new HashSet<>();
+
 
     // Constructors
     public User() {}
@@ -57,18 +54,15 @@ public class User implements UserDetails {
     }
 
     // UserDetails methods
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    @Override public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
-
     @Override public String getUsername() { return email; }
     @Override public String getPassword() { return password; }
     @Override public boolean isAccountNonExpired() { return true; }
     @Override public boolean isAccountNonLocked() { return true; }
     @Override public boolean isCredentialsNonExpired() { return true; }
     @Override public boolean isEnabled() { return true; }
-
 
 
 }

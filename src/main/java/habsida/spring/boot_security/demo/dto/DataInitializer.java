@@ -14,6 +14,7 @@ import java.util.Set;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
+
     @Autowired
     private UserRepository userRepository;
 
@@ -25,37 +26,43 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Role userRole = new Role();
-        userRole.setName("USER");
-        roleRepository.save(userRole);
 
-        Role adminRole = new Role();
-        adminRole.setName("ADMIN");
-        roleRepository.save(adminRole);
+        // Check and insert roles only if not present
+        Role userRole = roleRepository.findByName("USER").orElseGet(() -> roleRepository.save(new Role("USER")));
+        Role adminRole = roleRepository.findByName("ADMIN").orElseGet(() -> roleRepository.save(new Role("ADMIN")));
 
-        User admin = new User();
-        admin.setUsername("admin");
-        admin.setPassword(passwordEncoder.encode("admin"));
-        admin.setEmail("hassan@gmail.com");
-        Set<Role> adminRoles = new HashSet<>();
-        admin.setAge(23);
-        admin.setFirstName("Hassan");
-        admin.setLastName("Koroma");
-        adminRoles.add(adminRole);
-        adminRoles.add(userRole);
-        admin.setRoles(adminRoles);
-        userRepository.save(admin);
+        // Create an admin user only if it doesn't exist
+        if (!userRepository.existsByUsername("admin")) {
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setPassword(passwordEncoder.encode("admin"));
+            admin.setEmail("admin@gmail.com");
+            admin.setAge(23);
+            admin.setFirstName("Hassan");
+            admin.setLastName("Koroma");
+            Set<Role> adminRoles = new HashSet<>();
+            adminRoles.add(adminRole);
+            adminRoles.add(userRole);
+            admin.setRoles(adminRoles);
+            userRepository.save(admin);
+        }
 
-        User user = new User();
-        user.setUsername("user");
-        user.setPassword(passwordEncoder.encode("user"));
-        user.setEmail("mohamed@gmail.com");
-        user.setAge(33);
-        Set<Role> userRoles = new HashSet<>();
-        user.setFirstName("Mohamed");
-        user.setLastName("Kanu");
-        userRoles.add(userRole);
-        user.setRoles(userRoles);
-        userRepository.save(user);
+        // Create a normal user only if it doesn't exist
+        if (!userRepository.existsByUsername("user")) {
+            User user = new User();
+            user.setUsername("user");
+            user.setPassword(passwordEncoder.encode("user"));
+            user.setEmail("user@gmail.com");
+            user.setAge(33);
+            user.setFirstName("Mohamed");
+            user.setLastName("Kanu");
+            if (user.getRoles() == null) {
+                user.setRoles(new HashSet<>());
+            }
+            Set<Role> userRoles = new HashSet<>();
+            userRoles.add(userRole);
+            user.setRoles(userRoles);
+            userRepository.save(user);
+        }
     }
 }

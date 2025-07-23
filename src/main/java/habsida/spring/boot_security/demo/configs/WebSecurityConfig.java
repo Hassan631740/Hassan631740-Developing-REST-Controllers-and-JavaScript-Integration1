@@ -1,11 +1,16 @@
 package habsida.spring.boot_security.demo.configs;
 
 import habsida.spring.boot_security.demo.service.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -13,38 +18,53 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    private final UserServiceImpl userDetailsService;
+    @Autowired
+    private  UserServiceImpl userServiceImpl;
 
-    public WebSecurityConfig(UserServiceImpl userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+    @Autowired
+    private  PasswordEncoder passwordEncoder;
 
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationSuccessHandler successUserHandler() {
-        return new SuccessUserHandler();  // Ensure this class exists or implement custom handler
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                        .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/admin", true)  // <- redirects here after login
+                        .defaultSuccessUrl("/default", true)
+                        .failureUrl("/login?error")
                         .permitAll()
-                )
-                .logout(logout -> logout.permitAll());
 
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?error")
+                        .permitAll()
+                );
         return http.build();
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider(){
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userServiceImpl);
+        authProvider.setPasswordEncoder(passwordEncoder);
+        return authProvider;
+    }
+
+    public WebSecurityConfig(UserServiceImpl userServiceImpl,
+                             PasswordEncoder passwordEncoder) {
+        this.userServiceImpl = userServiceImpl;
+        this.passwordEncoder = passwordEncoder;
+
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler successUserHandler() {
+        return new SuccessUserHandler();  // Ensure this class exists or implement custom handler
     }
 }

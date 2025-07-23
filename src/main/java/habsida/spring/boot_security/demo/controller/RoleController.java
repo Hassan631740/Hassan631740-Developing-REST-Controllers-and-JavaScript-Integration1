@@ -18,7 +18,7 @@ public class RoleController {
     @GetMapping
     public String listRoles(Model model) {
         model.addAttribute("roles", roleRepository.findAll());
-        return "admin/roles"; // Thymeleaf view
+        return "admin/roles";
     }
 
     @GetMapping("/edit/{id}")
