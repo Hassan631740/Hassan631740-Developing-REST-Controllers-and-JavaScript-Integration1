@@ -42,7 +42,6 @@ public class UserServiceImpl implements UserDetailsService {
     }
     public void saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         Set<Role> resolvedRoles = new HashSet<>();
         for (Role role : user.getRoles()) {
             Role dbRole = roleRepository.findByName(role.getName())
@@ -52,6 +51,7 @@ public class UserServiceImpl implements UserDetailsService {
         user.setRoles(resolvedRoles);
 
         userRepository.save(user);
+        System.out.println(">>> Saving user: " + user.getEmail());
     }
 
     @Override

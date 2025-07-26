@@ -31,7 +31,7 @@ public class AdminController {
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
     }
-    // ✅ Show all users in admin panel
+    //  Show all users in admin panel
     @GetMapping("/admin")
     public String adminPage(Model model, @AuthenticationPrincipal UserDetails loggedInUser) {
         List<User> users = userService.findAllWithRoles();
@@ -56,7 +56,6 @@ public class AdminController {
             user.setUsername(user.getEmail());
         }
         //  Encode the password
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(resolvedRoles);
         userService.saveUser(user);
 
