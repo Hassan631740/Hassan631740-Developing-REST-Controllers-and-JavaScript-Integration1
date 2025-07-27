@@ -31,7 +31,7 @@ public class AdminController {
         this.roleService = roleService;
         this.passwordEncoder = passwordEncoder;
     }
-    //  Show all users in admin panel
+    // Show all users in an admin panel
     @GetMapping("/admin")
     public String adminPage(Model model, @AuthenticationPrincipal UserDetails loggedInUser) {
         List<User> users = userService.findAllWithRoles();
@@ -43,25 +43,25 @@ public class AdminController {
         model.addAttribute("allRoles", roleService.findAll());
         return "admin";
     }
-    // Save a new user
+
     @PostMapping("/api/users")
     public String saveUser(@ModelAttribute("newUser") User user,
                            @RequestParam("roles") List<Long> roleIds,
                            RedirectAttributes redirectAttributes) {
-        Set<Role> resolvedRoles = roleIds.stream()
-                .map(id -> roleService.findById(id).orElseThrow(() -> new RuntimeException("Role ID not found: " + id)))
+        Set<Role> roles = roleIds.stream()
+                .map(id -> roleService.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Invalid role ID: " + id)))
                 .collect(Collectors.toSet());
-        //  Ensure username is set!
+
+        user.setRoles(roles);
         if (user.getUsername() == null || user.getUsername().isEmpty()) {
             user.setUsername(user.getEmail());
         }
-        //  Encode the password
-        user.setRoles(resolvedRoles);
         userService.saveUser(user);
-
         redirectAttributes.addFlashAttribute("addSuccess", "User added successfully!");
         return "redirect:/admin";
     }
+
     //  Default login for user
     @GetMapping("/default")
     public String defaultAfterLogin(@AuthenticationPrincipal UserDetails userDetails) {
@@ -79,7 +79,7 @@ public class AdminController {
         redirectAttributes.addFlashAttribute("deleteSuccess", "User deleted successfully!");
         return "redirect:/admin";
     }
-
+    // Update a user
     @PostMapping("/admin/update")
     public String updateUser(
             @RequestParam Long id,

@@ -1,7 +1,7 @@
 package habsida.spring.boot_security.demo.service;
 
 import habsida.spring.boot_security.demo.model.Role;
-import org.springframework.security.core.userdetails.User;
+import habsida.spring.boot_security.demo.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Service
 public interface UserService {
+
     Optional<User> getLoggedInUserByEmail(String email);
 
     List<User> findAllWithRoles();

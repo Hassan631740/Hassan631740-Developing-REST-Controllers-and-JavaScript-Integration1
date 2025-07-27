@@ -145,8 +145,8 @@
         </button>
       </td>
       <td>
-        <form th:action="@{'/admin/delete/' + ${user.id}}" method="post" style="display:inline">
-          <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+        <form th:action="@{'/admin/delete/' + ${user.id}}" method="post" class="deleteForm" style="display:inline">
+          <button type="button" class="btn btn-danger btn-sm deleteBtn">Delete</button>
         </form>
       </td>
     </tr>
@@ -162,26 +162,25 @@
         <h5 class="modal-title" id="exampleModalLabel">Add New User</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form id="addUserForm" method="post" th:action="@{/api/users}" th:object="${newUser}">
+      <form id="addUserForm" method="post" th:action="@{/api/users}" th:object="${newUser}" onsubmit="return confirmAddUser(event)">
         <div class="modal-body">
           <input type="text" th:field="*{firstName}" class="form-control mb-2" placeholder="First Name" required>
           <input type="text" th:field="*{lastName}" class="form-control mb-2" placeholder="Last Name" required>
           <input type="number" th:field="*{age}" class="form-control mb-2" placeholder="Age" required>
           <input type="email" th:field="*{email}" class="form-control mb-2" placeholder="Email" required>
           <input type="password" th:field="*{password}" class="form-control mb-2" placeholder="Password" required>
-
-          <select multiple th:field="*{roles}" class="form-select mb-2" required>
+          <select multiple name="roles" class="form-select" >
             <option th:each="role : ${allRoles}" th:value="${role.id}" th:text="${role.name}"></option>
           </select>
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-success px-4">Add User</button>
         </div>
-      </form>        </div>
+      </form>
+    </div>
   </div>
 </div>
 
-<!-- Edit User Modal -->
 <!-- Edit User Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -297,5 +296,54 @@
     });
   });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  function confirmAddUser(event) {
+    event.preventDefault();
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'This will add a new user to the system.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, add user!',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: '#0d6efd',
+      cancelButtonColor: '#dc3545'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        document.getElementById("addUserForm").submit();
+      }
+    });
+    return false;
+  }
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const deleteButtons = document.querySelectorAll('.deleteBtn');
+
+    deleteButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        const form = this.closest('form');
+
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "This user will be permanently deleted!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Yes, delete!',
+          cancelButtonText: 'Cancel',
+          confirmButtonColor: '#0d6efd',  // Blue
+          cancelButtonColor: '#dc3545'   // Red
+        }).then((result) => {
+          if (result.isConfirmed) {
+            form.submit();
+          }
+        });
+      });
+    });
+  });
+</script>
+
 </body>
 </html>

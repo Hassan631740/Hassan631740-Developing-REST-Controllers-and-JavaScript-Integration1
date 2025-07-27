@@ -27,21 +27,19 @@ public class UserController {
         this.userService = userService;
     }
 
-    // display the user panel
     @GetMapping("/user")
     public String userPage(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         String email = userDetails.getUsername();
         User user = userService.findByEmail(email).orElse(null);
         model.addAttribute("user", user);
-        return "user";
+        return "user";  // refers to user.html
     }
 
-    // save a new user
     @PostMapping("/save")
     public String saveUser(@ModelAttribute("user") User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        return "redirect:/admin";
+        return "redirect:/admin"; // or wherever you want to go after saving
     }
 
 }
