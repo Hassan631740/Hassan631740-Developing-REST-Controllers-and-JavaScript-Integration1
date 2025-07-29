@@ -1,5 +1,6 @@
 package habsida.spring.boot_security.demo.service;
 
+import habsida.spring.boot_security.demo.repository.RoleRepository;
 import habsida.spring.boot_security.demo.repository.UserRepository;
 import habsida.spring.boot_security.demo.model.User;
 import habsida.spring.boot_security.demo.model.Role;
@@ -19,15 +20,18 @@ import java.util.Set;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository,
                            RoleService roleService,
+                           RoleRepository roleRepository,
                            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -35,15 +39,51 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public List<User> findAllWithRoles() {
         return userRepository.findAllWithRoles();
     }
-
     @Override
     public Optional<User> getLoggedInUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     @Override
+    public void updateUser(Long id, String firstName, String lastName, int age, String email, String password, List<Long> roleIds) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setAge(age);
+        user.setEmail(email);
+
+        // Encode and update the password
+        String encodedPassword = passwordEncoder.encode(password);
+        user.setPassword(encodedPassword);
+
+        // Update roles
+        Set<Role> roles = new HashSet<>(roleRepository.findAllById(roleIds));
+        user.setRoles(roles);
+
+
+        userRepository.save(user);
+    }
+
+    @Override
     public void saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // Fetch existing user if it's an update
+        Optional<User> existingUserOpt = user.getId() != null ? userRepository.findById(user.getId()) : Optional.empty();
+
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+            // Preserve existing password if not changed
+            if (user.getPassword() == null || user.getPassword().isBlank()) {
+                user.setPassword(existingUser.getPassword());
+            } else {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        // Always sync username to email
+        user.setUsername(user.getEmail());
 
         Set<Role> resolvedRoles = new HashSet<>();
         for (Role role : user.getRoles()) {
@@ -106,4 +146,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
+
 }

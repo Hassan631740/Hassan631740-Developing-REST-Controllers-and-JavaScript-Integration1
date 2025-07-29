@@ -13,6 +13,8 @@ public interface UserService {
 
     Optional<User> getLoggedInUserByEmail(String email);
 
+    void updateUser(Long id, String firstName, String lastName, int age, String email, String password, List<Long> roleIds);
+
     List<User> findAllWithRoles();
 
     void deleteUserById(Long id);
