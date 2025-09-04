@@ -20,7 +20,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/photo")
 @CrossOrigin(origins = "*")
-public class PhotoController {
+public class PhotoRestController {
 
     @Autowired
     private UserService userService;

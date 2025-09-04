@@ -19,13 +19,13 @@ import java.util.List;
 import java.util.Arrays;
 
 @Controller
-public class MainController {
+public class MainRestController {
 
     private final UserService userService;
     private final RoleService roleService;
 
     @Autowired
-    public MainController(UserService userService, RoleService roleService) {
+    public MainRestController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
