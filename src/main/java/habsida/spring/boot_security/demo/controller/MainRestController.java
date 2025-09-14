@@ -22,16 +22,17 @@ import java.util.Arrays;
 public class MainRestController {
 
     private final UserService userService;
-    private final RoleService roleService;
 
-    @Autowired
-    public MainRestController(UserService userService, RoleService roleService) {
+
+
+    public MainRestController(UserService userService ) {
         this.userService = userService;
-        this.roleService = roleService;
+
     }
 
     @GetMapping("/")
     public String index() {
+
         return "index";
     }
 

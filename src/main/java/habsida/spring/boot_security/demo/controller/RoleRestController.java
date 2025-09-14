@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*")
 public class RoleRestController {
 
-    @Autowired
+
     private RoleService roleService;
 
     @GetMapping

@@ -27,7 +27,7 @@ public class AdminRestController {
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
+
     public AdminRestController(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.roleService = roleService;

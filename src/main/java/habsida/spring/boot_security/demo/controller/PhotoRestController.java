@@ -22,8 +22,11 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 public class PhotoRestController {
 
-    @Autowired
-    private UserService userService;
+
+    private final UserService userService;
+    public PhotoRestController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse<String>> uploadPhoto(

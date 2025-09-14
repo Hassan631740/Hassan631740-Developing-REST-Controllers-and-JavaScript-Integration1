@@ -15,13 +15,13 @@ import java.util.Set;
 @Component
 public class DataInitializer implements CommandLineRunner {
 
-    @Autowired
-    private UserRepository userRepository;
+     @Autowired
+    private  UserRepository userRepository;
 
     @Autowired
     private RoleRepository roleRepository;
 
-    @Autowired
+     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override

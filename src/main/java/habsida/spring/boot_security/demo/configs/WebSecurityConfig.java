@@ -20,14 +20,11 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 @EnableWebSecurity
 public class WebSecurityConfig {
 
-    @Autowired
-    private UserServiceImpl userServiceImpl;
+    private final UserServiceImpl userServiceImpl;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -70,10 +67,10 @@ public class WebSecurityConfig {
         return authProvider;
     }
 
-    public WebSecurityConfig(UserServiceImpl userServiceImpl,
-                             PasswordEncoder passwordEncoder) {
+    public WebSecurityConfig(UserServiceImpl userServiceImpl, PasswordEncoder passwordEncoder, CustomAuthenticationFailureHandler customAuthenticationFailureHandler) {
         this.userServiceImpl = userServiceImpl;
         this.passwordEncoder = passwordEncoder;
+        this.customAuthenticationFailureHandler = customAuthenticationFailureHandler;
     }
 
     @Bean
